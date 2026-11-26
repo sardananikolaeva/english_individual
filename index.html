@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 26.11 · Индивидуальное обучение, 4 класс</title>
+<style>
+  :root{
+    --blue:#2f5fd0;
+    --blue-2:#3b6fd8;
+    --blue-dark:#24479c;
+    --ink:#16212e;
+    --muted:#5b7089;
+    --line:#cfdaea;
+    --bg:#eef2f8;
+    --ok:#1b7a3d;
+    --err:#b3261e;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI",Arial,Verdana,sans-serif;
+    font-size:17px;
+    line-height:1.5;
+  }
+
+  .app{
+    max-width:820px;
+    margin:0 auto;
+    padding:22px 16px 56px;
+  }
+
+  .card{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 4px 16px rgba(23,43,77,.07);
+    padding:18px 20px;
+    margin-bottom:14px;
+  }
+
+  /* ---------- Шапка ---------- */
+  .head{ padding:24px 24px 20px; }
+
+  .eyebrow{
+    margin:0 0 6px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  .head h1{
+    margin:0 0 8px;
+    font-size:25px;
+    line-height:1.25;
+  }
+
+  .head h1 .sub{
+    font-size:18px;
+    font-weight:600;
+    color:#3a4b60;
+  }
+
+  .head .topic{
+    margin:0;
+    font-size:15px;
+    color:#3a4b60;
+  }
+
+  /* ---------- Имя ученика ---------- */
+  .student label{
+    display:block;
+    font-size:14px;
+    font-weight:700;
+    color:#405268;
+    margin-bottom:6px;
+  }
+
+  .student input{
+    width:100%;
+    font:inherit;
+    font-size:17px;
+    padding:10px 14px;
+    border:2px solid var(--line);
+    border-radius:12px;
+    background:#fff;
+    color:var(--ink);
+  }
+
+  .student input:focus{
+    outline:none;
+    border-color:var(--blue-2);
+    box-shadow:0 0 0 3px rgba(59,111,216,.18);
+  }
+
+  .student input.invalid{
+    border-color:var(--err);
+    box-shadow:0 0 0 3px rgba(179,38,30,.14);
+  }
+
+  /* ---------- Памятка ---------- */
+  .rule{
+    border-left:5px solid var(--blue-2);
+    background:#f7faff;
+    font-size:15px;
+    color:#233a5c;
+  }
+
+  .rule p{ margin:0 0 8px; }
+  .rule p:last-child{ margin-bottom:0; }
+
+  .rule .rule-title{
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+
+  .rule .ex{
+    background:#e7f0ff;
+    border-radius:8px;
+    padding:8px 10px;
+  }
+
+  /* ---------- Задания ---------- */
+  .task-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    border-bottom:2px solid #e6ecf4;
+    padding-bottom:8px;
+    margin-bottom:10px;
+  }
+
+  .task-head h2{
+    margin:0;
+    font-size:18px;
+    line-height:1.3;
+  }
+
+  .points{
+    margin-left:auto;
+    font-size:13px;
+    color:#6a7d94;
+    white-space:nowrap;
+  }
+
+  .instruction{
+    margin:0 0 10px;
+    font-size:14px;
+    color:#405268;
+  }
+
+  /* ---------- Строка вопроса ---------- */
+  .q{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    padding:8px 10px;
+    border-radius:10px;
+    margin:0 0 6px;
+    font-size:17px;
+    transition:background .2s;
+  }
+
+  .q:last-child{ margin-bottom:0; }
+
+  .q .n{
+    font-weight:700;
+    color:var(--muted);
+    min-width:20px;
+  }
+
+  .q .hint{
+    font-size:13px;
+    color:#7186a0;
+  }
+
+  .q.invalid{ background:#fdeceb; }
+
+  /* ---------- Выпадающий список ---------- */
+  select.blank{
+    font:inherit;
+    font-weight:700;
+    color:var(--ink);
+    padding:6px 10px;
+    border:2px solid var(--line);
+    border-radius:10px;
+    background:#fff;
+    min-width:126px;
+    cursor:pointer;
+  }
+
+  select.blank:focus{
+    outline:none;
+    border-color:var(--blue-2);
+    box-shadow:0 0 0 3px rgba(59,111,216,.18);
+  }
+
+  .q.invalid select.blank,
+  tr.invalid select.blank{ border-color:var(--err); }
+
+  /* ---------- Банк слов ---------- */
+  .bank{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:10px 12px;
+    margin:0 0 12px;
+    border:2px dashed #9db8ea;
+    border-radius:12px;
+    background:#f4f8ff;
+  }
+
+  .bank span{
+    border:1px solid var(--blue-2);
+    background:#fff;
+    border-radius:8px;
+    padding:2px 10px;
+    font-weight:700;
+    color:var(--blue-dark);
+  }
+
+  /* ---------- Кнопки-варианты ---------- */
+  .choices{
+    display:inline-flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .opt{
+    position:relative;
+    display:inline-flex;
+  }
+
+  .opt input{
+    position:absolute;
+    width:1px;
+    height:1px;
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .opt span{
+    display:inline-block;
+    padding:6px 14px;
+    border:2px solid var(--line);
+    border-radius:999px;
+    background:#fff;
+    font-weight:700;
+    cursor:pointer;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+
+  .opt input:checked + span{
+    background:var(--blue-2);
+    border-color:var(--blue-2);
+    color:#fff;
+  }
+
+  .opt input:focus-visible + span{
+    box-shadow:0 0 0 3px rgba(59,111,216,.25);
+  }
+
+  .q.invalid .opt input:not(:checked) + span{ border-color:var(--err); }
+
+  /* ---------- Таблица ---------- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:16px;
+    margin:0 0 10px;
+  }
+
+  th,td{
+    border:1px solid #dbe3ee;
+    padding:8px 6px;
+    text-align:center;
+    vertical-align:middle;
+  }
+
+  th{
+    background:#f2f6fb;
+    color:#405268;
+    font-size:13px;
+    font-weight:700;
+  }
+
+  .stars{
+    font-size:18px;
+    letter-spacing:1px;
+  }
+
+  .unit{
+    font-weight:600;
+    color:#405268;
+    font-size:15px;
+  }
+
+  tr.invalid td{ background:#fdeceb; }
+
+  /* ---------- Отправка ---------- */
+  .actions{
+    text-align:center;
+    padding:20px;
+  }
+
+  .submit{
+    width:100%;
+    max-width:420px;
+    font:inherit;
+    font-size:18px;
+    font-weight:700;
+    color:#fff;
+    background:linear-gradient(180deg,#3b6fd8,#2f5fd0);
+    border:0;
+    border-radius:14px;
+    padding:14px 28px;
+    cursor:pointer;
+    box-shadow:0 8px 18px rgba(47,95,208,.28);
+    transition:transform .12s, box-shadow .12s, opacity .12s;
+  }
+
+  .submit:hover{ transform:translateY(-1px); }
+  .submit:active{ transform:none; }
+
+  .submit:disabled{
+    opacity:.65;
+    cursor:progress;
+    transform:none;
+    box-shadow:none;
+  }
+
+  .status{
+    min-height:24px;
+    margin:12px 0 0;
+    font-size:15px;
+    font-weight:600;
+  }
+
+  .status.success{ color:var(--ok); }
+  .status.error{ color:var(--err); }
+
+  .note{
+    margin:10px 0 0;
+    font-size:13px;
+    color:#7186a0;
+  }
+
+  /* ---------- Мобильные ---------- */
+  @media (max-width:520px){
+    body{ font-size:16px; }
+    .app{ padding:14px 10px 40px; }
+    .card{ padding:14px 14px; border-radius:14px; }
+    .head{ padding:18px 16px; }
+    .head h1{ font-size:21px; }
+    .head h1 .sub{ font-size:16px; }
+    .task-head h2{ font-size:16px; }
+    .q{ font-size:16px; }
+    .stars{ font-size:14px; }
+    select.blank{ min-width:104px; font-size:15px; padding:5px 6px; }
+    .opt span{ padding:5px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<main class="app">
+
+  <!-- ================= ШАПКА ================= -->
+  <header class="head card">
+    <p class="eyebrow">Английский язык</p>
+    <h1>Задание 26.11<br><span class="sub">Индивидуальное обучение, 4 класс</span></h1>
+    <p class="topic">Тема: «Личные и притяжательные местоимения. Числа до 10»</p>
+  </header>
+
+  <form id="quiz" action="https://formspree.io/f/mjywljzv" method="POST" novalidate>
+
+    <!-- ================= ИМЯ ================= -->
+    <div class="student card">
+      <label for="student">Имя ученика</label>
+      <input type="text" id="student" name="student" placeholder="Например: Иван Петров" autocomplete="name" required>
+    </div>
+
+    <!-- ================= ПАМЯТКА ================= -->
+    <div class="rule card">
+      <p class="rule-title">Памятка</p>
+      <p>
+        <b>I</b> — я → <b>my</b> — мой ·
+        <b>you</b> — ты/вы → <b>your</b> — твой/ваш ·
+        <b>he</b> — он → <b>his</b> — его ·
+        <b>she</b> — она → <b>her</b> — её ·
+        <b>it</b> — оно → <b>its</b> — его/её ·
+        <b>we</b> — мы → <b>our</b> — наш ·
+        <b>they</b> — они → <b>their</b> — их
+      </p>
+      <p class="ex"><b>Пример:</b> I have a cat. <b>My</b> cat is small. — У меня есть кошка. Моя кошка маленькая.</p>
+    </div>
+
+    <!-- ================= ЗАДАНИЕ 1 ================= -->
+    <section class="task card">
+      <div class="task-head">
+        <h2>Задание 1. Вставь нужное местоимение</h2>
+        <span class="points">5 баллов</span>
+      </div>
+      <p class="instruction">Выбери слово из списка. Каждое слово используется один раз.</p>
+
+      <div class="bank" data-words="I,you,he,she,we"></div>
+
+      <div class="q">
+        <span class="n">1.</span>
+        <select class="blank" name="t1_1" data-task="1" aria-label="Предложение 1"></select>
+        <span>have 10 pens.</span>
+        <span class="hint">(У меня есть 10 ручек.)</span>
+      </div>
+
+      <div class="q">
+        <span class="n">2.</span>
+        <select class="blank" name="t1_2" data-task="1" aria-label="Предложение 2"></select>
+        <span>is my friend. He is 9.</span>
+        <span class="hint">(Он мой друг. Ему 9 лет.)</span>
+      </div>
+
+      <div class="q">
+        <span class="n">3.</span>
+        <select class="blank" name="t1_3" data-task="1" aria-label="Предложение 3"></select>
+        <span>are pupils. We are 7.</span>
+        <span class="hint">(Мы ученики. Нам 7 лет.)</span>
+      </div>
+
+      <div class="q">
+        <span class="n">4.</span>
+        <select class="blank" name="t1_4" data-task="1" aria-label="Предложение 4"></select>
+        <span>is a girl. She is 8.</span>
+        <span class="hint">(Она девочка. Ей 8 лет.)</span>
+      </div>
+
+      <div class="q">
+        <span class="n">5.</span>
+        <select class="blank" name="t1_5" data-task="1" aria-label="Предложение 5"></select>
+        <span>have 4 cats.</span>
+        <span class="hint">(У тебя есть 4 кошки.)</span>
+      </div>
+    </section>
+
+    <!-- ================= ЗАДАНИЕ 2 ================= -->
+    <section class="task card">
+      <div class="task-head">
+        <h2>Задание 2. Выбери правильное слово</h2>
+        <span class="points">5 баллов</span>
+      </div>
+      <p class="instruction">Нажми на нужное притяжательное местоимение.</p>
+
+      <div class="q">
+        <span class="n">1.</span>
+        <span>I have a book.</span>
+        <span class="choices" data-name="t2_1" data-options="My|Your"></span>
+        <span>book is new.</span>
+      </div>
+
+      <div class="q">
+        <span class="n">2.</span>
+        <span>You have 2 cats.</span>
+        <span class="choices" data-name="t2_2" data-options="His|Your"></span>
+        <span>cats are white.</span>
+      </div>
+
+      <div class="q">
+        <span class="n">3.</span>
+        <span>He has 3 balls.</span>
+        <span class="choices" data-name="t2_3" data-options="His|Her"></span>
+        <span>balls are red.</span>
+      </div>
+
+      <div class="q">
+        <span class="n">4.</span>
+        <span>She has 5 dolls.</span>
+        <span class="choices" data-name="t2_4" data-options="Her|Their"></span>
+        <span>dolls are nice.</span>
+      </div>
+
+      <div class="q">
+        <span class="n">5.</span>
+        <span>We have 10 pencils.</span>
+        <span class="choices" data-name="t2_5" data-options="Our|Its"></span>
+        <span>pencils are long.</span>
+      </div>
+    </section>
+
+    <!-- ================= ЗАДАНИЕ 3 ================= -->
+    <section class="task card">
+      <div class="task-head">
+        <h2>Задание 3. Посчитай и выбери число словами</h2>
+        <span class="points">5 баллов</span>
+      </div>
+      <p class="instruction">Посмотри, сколько предметов, и выбери правильное число.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:10%;">№</th>
+            <th style="width:34%;">Предметы</th>
+            <th style="width:14%;">Сколько?</th>
+            <th style="width:42%;">Ответ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><span class="stars">⭐⭐⭐</span></td>
+            <td><b>3</b></td>
+            <td>
+              <select class="blank" name="t3_1" data-task="3" aria-label="Ответ 1"></select>
+              <span class="unit">stars</span>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td><b>5</b></td>
+            <td>
+              <select class="blank" name="t3_2" data-task="3" aria-label="Ответ 2"></select>
+              <span class="unit">stars</span>
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><span class="stars">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐</span></td>
+            <td><b>10</b></td>
+            <td>
+              <select class="blank" name="t3_3" data-task="3" aria-label="Ответ 3"></select>
+              <span class="unit">stars</span>
+            </td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><span class="stars">📚📚</span></td>
+            <td><b>2</b></td>
+            <td>
+              <select class="blank" name="t3_4" data-task="3" aria-label="Ответ 4"></select>
+              <span class="unit">books</span>
+            </td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><span class="stars">📚📚📚📚📚📚</span></td>
+            <td><b>6</b></td>
+            <td>
+              <select class="blank" name="t3_5" data-task="3" aria-label="Ответ 5"></select>
+              <span class="unit">books</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="instruction" style="margin:0;">
+        Подсказка: 1 — one, 2 — two, 3 — three, 4 — four, 5 — five, 6 — six, 7 — seven, 8 — eight, 9 — nine, 10 — ten.
+      </p>
+    </section>
+
+    <!-- ================= ОТПРАВКА ================= -->
+    <div class="actions card">
+      <button type="submit" class="submit" id="submitBtn">Отправить учителю</button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <p class="note">Перед отправкой проверь своё имя и ответы.</p>
+    </div>
+
+    <input type="hidden" name="_subject" id="subject" value="Задание 26.11">
+    <textarea name="answers" id="answers" hidden></textarea>
+  </form>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var form = document.getElementById('quiz');
+  var nameInput = document.getElementById('student');
+  var statusEl = document.getElementById('status');
+  var submitBtn = document.getElementById('submitBtn');
+  var subjectInput = document.getElementById('subject');
+  var answersInput = document.getElementById('answers');
+
+  var T1_WORDS = ['I', 'you', 'he', 'she', 'we'];
+  var NUMBER_WORDS = ['one', 'two', 'three', 'four', 'five',
+                      'six', 'seven', 'eight', 'nine', 'ten'];
+
+  /* ---------- Перемешивание ---------- */
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
+    }
+    return a;
+  }
+
+  /* ---------- Заполнение выпадающего списка ---------- */
+  function fillSelect(select, words) {
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = '—';
+    select.appendChild(placeholder);
+
+    shuffle(words).forEach(function (word) {
+      var opt = document.createElement('option');
+      opt.value = word;
+      opt.textContent = word;
+      select.appendChild(opt);
+    });
+  }
+
+  /* ---------- Задание 1 ---------- */
+  document.querySelectorAll('select[data-task="1"]').forEach(function (sel) {
+    fillSelect(sel, T1_WORDS);
+  });
+
+  document.querySelectorAll('.bank[data-words]').forEach(function (bank) {
+    var words = bank.getAttribute('data-words').split(',');
+    bank.innerHTML = shuffle(words).map(function (w) {
+      return '<span>' + w + '</span>';
+    }).join('');
+  });
+
+  /* ---------- Задание 2 ---------- */
+  document.querySelectorAll('.choices').forEach(function (box) {
+    var name = box.getAttribute('data-name');
+    var options = box.getAttribute('data-options').split('|');
+
+    box.innerHTML = shuffle(options).map(function (word) {
+      return '<label class="opt">' +
+               '<input type="radio" name="' + name + '" value="' + word + '">' +
+               '<span>' + word + '</span>' +
+             '</label>';
+    }).join('');
+  });
+
+  /* ---------- Задание 3 ---------- */
+  document.querySelectorAll('select[data-task="3"]').forEach(function (sel) {
+    fillSelect(sel, NUMBER_WORDS);
+  });
+
+  /* ---------- Снятие подсветки ошибки ---------- */
+  form.addEventListener('change', function (e) {
+    var target = e.target;
+    if (!target || !target.matches) return;
+    if (target.matches('select.blank, input[type="radio"]')) {
+      var row = target.closest('.q, tr');
+      if (row) row.classList.remove('invalid');
+    }
+  });
+
+  nameInput.addEventListener('input', function () {
+    nameInput.classList.remove('invalid');
+  });
+
+  /* ---------- Проверка заполнения ---------- */
+  function validate() {
+    var firstBad = null;
+
+    document.querySelectorAll('select.blank').forEach(function (sel) {
+      var row = sel.closest('.q, tr');
+      var ok = sel.value !== '';
+      if (row) row.classList.toggle('invalid', !ok);
+      if (!ok && !firstBad) firstBad = row || sel;
+    });
+
+    document.querySelectorAll('.choices').forEach(function (box) {
+      var row = box.closest('.q');
+      var ok = !!box.querySelector('input[type="radio"]:checked');
+      if (row) row.classList.toggle('invalid', !ok);
+      if (!ok && !firstBad) firstBad = row || box;
+    });
+
+    var nameOk = nameInput.value.trim() !== '';
+    nameInput.classList.toggle('invalid', !nameOk);
+    if (!nameOk && !firstBad) firstBad = nameInput;
+
+    return firstBad;
+  }
+
+  /* ---------- Текст ответов для учителя ---------- */
+  function buildAnswers() {
+    var lines = [];
+
+    lines.push('Задание 1. Личные местоимения:');
+    document.querySelectorAll('select[data-task="1"]').forEach(function (sel, i) {
+      var v = sel.value;
+      lines.push((i + 1) + ') ' + v.charAt(0).toUpperCase() + v.slice(1));
+    });
+
+    lines.push('');
+    lines.push('Задание 2. Притяжательные местоимения:');
+    document.querySelectorAll('.choices').forEach(function (box, i) {
+      var checked = box.querySelector('input[type="radio"]:checked');
+      lines.push((i + 1) + ') ' + (checked ? checked.value : '—'));
+    });
+
+    lines.push('');
+    lines.push('Задание 3. Числа словами:');
+    document.querySelectorAll('select[data-task="3"]').forEach(function (sel, i) {
+      lines.push((i + 1) + ') ' + sel.value);
+    });
+
+    return lines.join('\n');
+  }
+
+  /* ---------- Отправка в Formspree ---------- */
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    statusEl.className = 'status';
+    statusEl.textContent = '';
+
+    var bad = validate();
+    if (bad) {
+      statusEl.className = 'status error';
+      statusEl.textContent = 'Ответь, пожалуйста, на все вопросы и напиши своё имя.';
+      if (bad.scrollIntoView) {
+        bad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      if (bad === nameInput) {
+        nameInput.focus({ preventScroll: true });
+      }
+      return;
+    }
+
+    var studentName = nameInput.value.trim();
+    answersInput.value = buildAnswers();
+    subjectInput.value = 'Задание 26.11 — ' + studentName;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправляем…';
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    })
+      .then(function (response) {
+        return response.json().catch(function () { return {}; }).then(function (data) {
+          if (response.ok) return data;
+          var message = (data && data.errors && data.errors.map(function (err) {
+            return err.message;
+          }).join('; ')) || ('ошибка ' + response.status);
+          throw new Error(message);
+        });
+      })
+      .then(function () {
+        statusEl.className = 'status success';
+        statusEl.textContent = 'Готово! Работа отправлена учителю. Спасибо, ' + studentName + '!';
+        form.reset();
+        answersInput.value = '';
+        document.querySelectorAll('.invalid').forEach(function (el) {
+          el.classList.remove('invalid');
+        });
+      })
+      .catch(function (err) {
+        statusEl.className = 'status error';
+        statusEl.textContent = 'Не удалось отправить: ' + err.message +
+                               '. Проверь интернет и попробуй ещё раз.';
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить учителю';
+      });
+  });
+})();
+</script>
+
+</body>
+</html>
